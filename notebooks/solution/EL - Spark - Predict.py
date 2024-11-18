@@ -108,7 +108,7 @@ url = 'https://adb-34351534749836.16.azuredatabricks.net/serving-endpoints/EL_Lo
 # headers = {'Authorization': f'Bearer {os.environ.get("DATABRICKS_TOKEN")}', 'Content-Type': 'application/json'}
 headers = {'Authorization': f"Bearer {dbutils.secrets.get(scope='formation-docaposte', key='el_db_api_key')}", 'Content-Type': 'application/json'}
 
-ds_dict = {'dataframe_split': test_df_pandas[["person_age", "log_person_income", "loan_percent_income"]].iloc[10:20].to_dict(orient='split')}
+ds_dict = {'dataframe_split': test_df_pandas[["person_age", "log_person_income", "loan_percent_income"]].iloc[:10].to_dict(orient='split')}
 data_json = json.dumps(ds_dict, allow_nan=True)
 
 response = requests.request(method='POST', headers=headers, url=url, data=data_json)
@@ -117,49 +117,6 @@ if response.status_code != 200:
 else:
     print('Success - 200')
 print(json.dumps(response.json(), indent=4))
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-# BONUS
-# 
-# # FULL SPARK EXAMPLE - VecAssembler does not work in High-concurrency cluster.
-# from pyspark.ml import Pipeline
-# from pyspark.ml.classification import RandomForestClassifier
-# from pyspark.ml.feature import VectorAssembler
-
-# # Define feature columns and label column
-# feature_cols = ["person_age", "person_income", "loan_percent_income"]
-# label_col = "loan_status"
-
-# # Assemble features
-# assembler = VectorAssembler(inputCols=feature_cols, outputCol=label_col)
-
-
-# # Define Random Forest model
-# rf = RandomForestClassifier(labelCol=label_col, featuresCol="features")
-
-# # Create a pipeline
-# pipeline = Pipeline(stages=[assembler, rf])
-
-# # Fit the model
-# model = pipeline.fit(train_df)
-
-# # Make predictions
-# predictions = model.transform(test_df)
-
-# display(predictions)
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-
 
 # COMMAND ----------
 
