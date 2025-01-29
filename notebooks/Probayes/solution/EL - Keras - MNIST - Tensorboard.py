@@ -21,7 +21,9 @@ notebook.list()
 
 # COMMAND ----------
 
-# MAGIC %tensorboard --logdir $experiment_log_dir --port=6105 --bind_all
+# %load_ext tensorboard
+# experiment_log_dir = "/Workspace/Users/eliott.legendre@openvalue.fr/runs/"
+%tensorboard --logdir $experiment_log_dir --port=6105 --bind_all
 
 # COMMAND ----------
 
@@ -219,7 +221,7 @@ for version in model_versions:
 import matplotlib.pyplot as plt
 import numpy as np
 
-y_test_randomized = np.random.permutation(y_test)
+(x_train, y_train), (x_test, y_test) = get_dataset(10)
 
 # Visualize the first 10 images in the test set
 for i in range(2):
@@ -227,13 +229,18 @@ for i in range(2):
     plt.title(f"Label: {np.argmax(y_test[i])}")
     plt.show()
     print(f"Label [{y_test[i]}]")
-    print(f"Label Shuffled [{y_test_randomized[i]}]")
+    print(f"Label Shuffled [{y_test[i]}]")
 
 
 
 # COMMAND ----------
 
+def visualize_image(image):
+    acc = "\n".join(["".join(["X" if pixel == 0 else " " for pixel in row]) for row in image.reshape(28, 28)])
+    print(acc)
 
+# Example usage
+visualize_image(x_test[i])
 
 # COMMAND ----------
 
@@ -278,42 +285,42 @@ score_model(x_test[:100])
 
 # COMMAND ----------
 
-# # Add a secret to the scope
+# Add a secret to the scope
 
-# import requests
+import requests
 
-# db_token = "mytoken"
+db_token = "mytoken"
 
-# # Define variables
-# workspace_url = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().get()
-# headers = {
-#     "Authorization": f"Bearer {db_token}",
-#     "Content-Type": "application/json"
-# }
-# add_secret_url = f"{workspace_url}/api/2.0/secrets/put"
+# Define variables
+workspace_url = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().get()
+headers = {
+    "Authorization": f"Bearer {db_token}",
+    "Content-Type": "application/json"
+}
+add_secret_url = f"{workspace_url}/api/2.0/secrets/put"
 
-# data = {
-#     "scope": "formation-docaposte",
-#     "key": "el_db_api_key",
-#     "string_value": f"{db_token}"
-# }
-# response = requests.post(add_secret_url, headers=headers, json=data)
-# if response.status_code == 200:
-#     print("Secret added successfully.")
-# else:
-#     print(f"Failed to add secret: {response.text}")
+data = {
+    "scope": "formation-docaposte",
+    "key": "el_db_api_key",
+    "string_value": f"{db_token}"
+}
+response = requests.post(add_secret_url, headers=headers, json=data)
+if response.status_code == 200:
+    print("Secret added successfully.")
+else:
+    print(f"Failed to add secret: {response.text}")
 
 
 
 
 
 # retrieve secrets
-# scopes = dbutils.secrets.listScopes()
-# display(scopes)
-# secrets = dbutils.secrets.list("formation-docaposte")
-# display(secrets)
-# api_key = dbutils.secrets.get(scope="formation-docaposte", key="el_db_api_key")
-# display(api_key)
+scopes = dbutils.secrets.listScopes()
+display(scopes)
+secrets = dbutils.secrets.list("formation-docaposte")
+display(secrets)
+api_key = dbutils.secrets.get(scope="formation-docaposte", key="el_db_api_key")
+display(api_key)
 
 # COMMAND ----------
 

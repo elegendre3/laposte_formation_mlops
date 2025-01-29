@@ -158,6 +158,9 @@ with mlflow.start_run():
 
 # Second run for showing MLFlow UI
 
+import mlflow
+import mlflow.sklearn
+
 n_estimators =200
 seed = 42
 
